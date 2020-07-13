@@ -4,9 +4,14 @@
   // api url
   const apiBaseUrl = 'https://opentdb.com/api.php?amount=1&type=multiple';
 
-  // set trivias array
+  // set variables
   let trivias = [];
   let trivia = '';
+
+  let question = '';
+  let category = '';
+  let difficulty = '';
+  let correctAnswer = '';
   let shuffledAnswers = [];
 
   // fetch trivia
@@ -14,10 +19,18 @@
     const res = await fetch(apiBaseUrl);
     trivias = await res.json();
     trivia = trivias.results[0];
-    // console.log(trivia);
+
+    // get trivia question
+    question = trivia.question;
+
+    // get trivia category
+    category = trivia.category;
+
+    // get difficulty
+    difficulty = trivia.difficulty;
 
     // get correct answer
-    let correctAnswer = trivia.correct_answer;
+    correctAnswer = trivia.correct_answer;
 
     // get incorrect answers array
     let incorrectAnswersArr = trivia.incorrect_answers;
@@ -26,14 +39,13 @@
     let combinedAnswersArr = incorrectAnswersArr;
     combinedAnswersArr.push(correctAnswer);
 
+    // shuffle all answers
     shuffledAnswers = shuffle(combinedAnswersArr);
-    console.log('All Answers:', combinedAnswersArr);
-    console.log('Correct Answer:', correctAnswer);
   });
 
   // Shuffle Answers in array - from stackoverflow
   function shuffle(array) {
-    var currentIndex = array.length,
+    let currentIndex = array.length,
       temporaryValue,
       randomIndex;
 
@@ -59,7 +71,8 @@
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
-      .replace(/&#039;/g, "'");
+      .replace(/&#039;/g, "'")
+      .replace(/&eacute;/g, 'é');
   }
 
   function handleNext() {
@@ -71,45 +84,34 @@
   {#if trivia.length === 0}
     <h1>Loading...</h1>
   {:else}
-    <h2>{trivia.category.toUpperCase()}</h2>
-    <h3>
-      DIFFICULTY: {trivia.difficulty.toUpperCase() === 'MEDIUM' ? 'MODERATE' : trivia.difficulty.toUpperCase()}
-    </h3>
-    <h1>{htmlEntities(trivia.question)}</h1>
-
-    <p>
-      <strong>A.</strong>
-      {htmlEntities(shuffledAnswers[0])}
-    </p>
-    <p>
-      <strong>B.</strong>
-      {htmlEntities(shuffledAnswers[1])}
-    </p>
-    <p>
-      <strong>C.</strong>
-      {htmlEntities(shuffledAnswers[2])}
-    </p>
-    <p>
-      <strong>D.</strong>
-      {htmlEntities(shuffledAnswers[3])}
-    </p>
-
-    <!-- <button on:click={handleNext}>Next Question</button> -->
+    <h2>{htmlEntities(category)}</h2>
+    <h3>{htmlEntities(difficulty)}</h3>
+    <h1>{htmlEntities(question)}</h1>
+    <hr />
+    <!-- iterate on shuffledAnswers array -->
+    {#each shuffledAnswers as answer}
+      <div class="box">{htmlEntities(answer)}</div>
+    {/each}
+    <hr />
+    <p>{htmlEntities(correctAnswer)}</p>
   {/if}
-
 </main>
 
 <style>
   main {
     text-align: center;
     padding: 1em;
-    max-width: 240px;
+    /* max-width: 240px; */
     margin: 0 auto;
   }
 
   h1 {
     font-size: 2em;
-    font-weight: 200;
+    font-weight: 300;
+  }
+
+  h2 {
+    font-weight: 600;
   }
 
   h3 {
@@ -120,5 +122,19 @@
     main {
       max-width: none;
     }
+  }
+
+  .box {
+    display: inline-block;
+    border: 2px solid #333;
+    border-radius: 5px;
+    margin: 1rem;
+    padding: 1rem;
+    transition: 250ms ease-in-out;
+    cursor: pointer;
+  }
+
+  .box:hover {
+    background-color: coral;
   }
 </style>
