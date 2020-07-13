@@ -79,22 +79,18 @@
 
     <p>
       <strong>A.</strong>
-      <!-- {htmlEntities(trivia.incorrect_answers[0])} -->
       {htmlEntities(shuffledAnswers[0])}
     </p>
     <p>
       <strong>B.</strong>
-      <!-- {htmlEntities(trivia.incorrect_answers[1])} -->
       {htmlEntities(shuffledAnswers[1])}
     </p>
     <p>
       <strong>C.</strong>
-      <!-- {htmlEntities(trivia.incorrect_answers[2])} -->
       {htmlEntities(shuffledAnswers[2])}
     </p>
     <p>
       <strong>D.</strong>
-      <!-- {htmlEntities(trivia.correct_answer)} -->
       {htmlEntities(shuffledAnswers[3])}
     </p>
 
