@@ -14,6 +14,8 @@
   let correctAnswer = '';
   let shuffledAnswers = [];
 
+  let selectedAnswer = '';
+
   // fetch trivia
   onMount(async () => {
     const res = await fetch(apiBaseUrl);
@@ -21,16 +23,16 @@
     trivia = trivias.results[0];
 
     // get trivia question
-    question = trivia.question;
+    question = htmlSanitize(trivia.question);
 
     // get trivia category
-    category = trivia.category;
+    category = htmlSanitize(trivia.category);
 
     // get difficulty
-    difficulty = trivia.difficulty;
+    difficulty = htmlSanitize(trivia.difficulty);
 
     // get correct answer
-    correctAnswer = trivia.correct_answer;
+    correctAnswer = htmlSanitize(trivia.correct_answer);
 
     // get incorrect answers array
     let incorrectAnswersArr = trivia.incorrect_answers;
@@ -41,6 +43,8 @@
 
     // shuffle all answers
     shuffledAnswers = shuffle(combinedAnswersArr);
+
+    console.log('ANS:', correctAnswer);
   });
 
   // Shuffle Answers in array - from stackoverflow
@@ -65,7 +69,7 @@
   }
 
   // convert html entities to symbols
-  function htmlEntities(str) {
+  function htmlSanitize(str) {
     return String(str)
       .replace(/&amp;/g, '&')
       .replace(/&lt;/g, '<')
@@ -73,6 +77,10 @@
       .replace(/&quot;/g, '"')
       .replace(/&#039;/g, "'")
       .replace(/&eacute;/g, 'é');
+  }
+
+  function handleClick(e) {
+    selectedAnswer = e.target.value;
   }
 
   function handleNext() {
@@ -84,15 +92,19 @@
   {#if trivia.length === 0}
     <h1>Loading...</h1>
   {:else}
+    <!-- display trivia info -->
     <h2>{category}</h2>
     <h3>{difficulty === 'medium' ? 'MODERATE' : difficulty.toUpperCase()}</h3>
-    <h1>{htmlEntities(question)}</h1>
+    <h1>{question}</h1>
     <hr />
     {#each shuffledAnswers as answer}
-      <div class="box">{htmlEntities(answer)}</div>
+      <button class="box" on:click={handleClick} value={htmlSanitize(answer)}>
+        {htmlSanitize(answer)}
+      </button>
     {/each}
-    <hr />
-    <p>{htmlEntities(correctAnswer)}</p>
+    {#if selectedAnswer === correctAnswer}
+      <div class="msg correct">{correctAnswer} is Correct!</div>
+    {/if}
   {/if}
 </main>
 
@@ -134,5 +146,13 @@
 
   .box:hover {
     background-color: coral;
+  }
+
+  .msg {
+    font-size: 2rem;
+  }
+
+  .correct {
+    color: green;
   }
 </style>
