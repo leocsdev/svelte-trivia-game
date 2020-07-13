@@ -84,11 +84,10 @@
   {#if trivia.length === 0}
     <h1>Loading...</h1>
   {:else}
-    <h2>{htmlEntities(category)}</h2>
-    <h3>{htmlEntities(difficulty)}</h3>
+    <h2>{category}</h2>
+    <h3>{difficulty === 'medium' ? 'MODERATE' : difficulty.toUpperCase()}</h3>
     <h1>{htmlEntities(question)}</h1>
     <hr />
-    <!-- iterate on shuffledAnswers array -->
     {#each shuffledAnswers as answer}
       <div class="box">{htmlEntities(answer)}</div>
     {/each}
